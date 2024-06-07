@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Your style here*/
+
+        .content {
+            background: radial-gradient(circle at 50% 50%, rgb(255, 255, 255) 25%, rgb(0, 0, 0) 65%);
+            height: 100vh;
+        }
+
+        #login {
+            position: absolute;
+            left: 50vw;
+            top: 50vh;
+            margin: auto;
+            width: 20vw;
+            height: 2.5em;
+            margin-left: -10vw;
+            margin-top: -1.5em;
+            font-size: 1em;
+            line-height: 3em;
+            text-align: center;
+            border-radius: 10px;
+            outline-color: #F96D00;
+            background-color: whitesmoke;
+        }
+
+        input[type='password'] {
+            font-family: Verdana;
+            letter-spacing: 0.125em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content">
+        <div data-id="alert" style="display: none;">Incorrect password</div>
+        <input type="password" id="login" placeholder="Password" />
+
+    </div>
+
+    <script>
+        
+        function login(secret) {
+            var hash = CryptoJS.SHA1(secret).toString(); // Calculate SHA-1 hash
+            var url = "https://483d8b.pythonanywhere.com/static/" + hash + "/index.html";
+            var alert = document.querySelectorAll('[data-id="alert"]');
+            var password = document.getElementById('login');
+
+            var request = new XMLHttpRequest();
+            request.open('GET', url, true);
+
+            request.onload = function () {
+                if (request.status >= 200 && request.status < 400) {
+                    let nva = new Date().getTime() + 1_000;
+                    window.location = url + "?nva=" + nva;
+                } else {
+                    parent.location.hash = hash;
+                    alert[0].style.display = 'block';
+                    password.setAttribute('placeholder', 'Incorrect password');
+                    password.value = '';
+                }
+            };
+            request.onerror = function () {
+                parent.location.hash = hash;
+                alert[0].style.display = 'block';
+                password.setAttribute('placeholder', 'Incorrect password');
+                password.value = '';
+            };
+            request.send();
+        }
+
+        var password = document.getElementById('login');
+        password.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                login(password.value);
+            }
+        });
+        document.getElementById("login").focus();
+
+
+    </script>
+
+</body>
+
+</html>
