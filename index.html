@@ -58,7 +58,7 @@
         
         function login(secret) {
             var hash = CryptoJS.SHA1(secret).toString(); // Calculate SHA-1 hash
-            var url = "https://483d8b.pythonanywhere.com/static/" + hash + "/index.html";
+            var url = hash + "/index.html";
             var alert = document.querySelectorAll('[data-id="alert"]');
             var password = document.getElementById('login');
 
